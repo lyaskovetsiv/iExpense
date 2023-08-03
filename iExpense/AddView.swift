@@ -28,9 +28,21 @@ struct AddView: View {
 				TextField("Amount", value: $amount, format: .currency(code: "USD"))
 					.keyboardType(.decimalPad)
 			}
-			.navigationTitle("Add new expense")
+			.navigationTitle("Add new expense") 
+			.toolbar {
+				Button {
+					createNewExpense()
+				} label: {
+					Text("Save")
+				}
+			}
 		}
     }
+	
+	private func createNewExpense() {
+		let newExpense = ExpenseItem(name: name, type: type, amount: amount)
+		expenses.items.append(newExpense)
+	}
 }
 
 struct AddView_Previews: PreviewProvider {
