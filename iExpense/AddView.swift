@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddView: View {
 	
+	@Environment(\.dismiss) var dismiss
 	@State private var name: String = ""
 	@State private var type: String = ""
 	@State private var amount = 0.0
@@ -32,6 +33,7 @@ struct AddView: View {
 			.toolbar {
 				Button {
 					createNewExpense()
+					dismiss()
 				} label: {
 					Text("Save")
 				}

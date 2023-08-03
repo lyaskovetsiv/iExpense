@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
 	
+	
 	@StateObject var expenses = Expenses()
 	@State private var isShowingAddNewExpense = false
 	
@@ -16,7 +17,15 @@ struct ContentView: View {
 		NavigationView {
 			List {
 				ForEach(expenses.items, id: \.id) { item in
-					Text("\(item.name)")
+					HStack {
+						VStack (alignment: .leading) {
+							Text(item.name)
+								.font(.headline)
+							Text(item.type)
+						}
+						Spacer()
+						Text(item.amount, format: .currency(code: "USD"))
+					}
 				}
 				.onDelete { indexSet in
 					removeItems(at: indexSet)
