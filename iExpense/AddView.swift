@@ -11,11 +11,14 @@ struct AddView: View {
 	
 	@Environment(\.dismiss) var dismiss
 	@State private var name: String = ""
-	@State private var type: String = ""
+	@State private var type: String = "Personal"
 	@State private var amount = 0.0
 	@ObservedObject var expenses: Expenses
 	
-	private let types = ["Businesss", "Personal"]
+	private let types = ["Personal", "Business"]
+	private var formatCurrency: FloatingPointFormatStyle<Double>.Currency {
+		return .currency(code: Locale.current.currency?.identifier ?? "USD")
+	}
 	
     var body: some View {
 		NavigationView {
@@ -24,9 +27,11 @@ struct AddView: View {
 				Picker("Type", selection: $type) {
 					ForEach(types, id: \.self) { type in
 						Text("\(type)")
+						
+						
 					}
 				}
-				TextField("Amount", value: $amount, format: .currency(code: "USD"))
+				TextField("Amount", value: $amount, format: formatCurrency)
 					.keyboardType(.decimalPad)
 			}
 			.navigationTitle("Add new expense") 

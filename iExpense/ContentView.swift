@@ -8,29 +8,63 @@
 import SwiftUI
 
 struct ContentView: View {
-	
+
+	// MARK: - Properties
 	
 	@StateObject var expenses = Expenses()
 	@State private var isShowingAddNewExpense = false
+	private var formatCurrency: FloatingPointFormatStyle<Double>.Currency {
+		return .currency(code: Locale.current.currency?.identifier ?? "USD")
+	}
+	
+	// MARK: - UI
 	
     var body: some View {
 		NavigationView {
 			List {
-				ForEach(expenses.items, id: \.id) { item in
-					HStack {
-						VStack (alignment: .leading) {
-							Text(item.name)
-								.font(.headline)
-							Text(item.type)
+				Section {
+					ForEach(expenses.items.filter({ $0.type == "Personal"}),
+							id: \.id) { item in
+						HStack {
+							VStack (alignment: .leading) {
+								Text(item.name)
+									.font(.headline)
+								Text(item.type)
+							}
+							Spacer()
+							Text(item.amount, format: formatCurrency)
+								.foregroundColor(checkColor(amount: item.amount))
 						}
-						Spacer()
-						Text(item.amount, format: .currency(code: "USD"))
 					}
+					.onDelete { indexSet in
+						removeItems(at: indexSet)
+					}
+				} header: {
+					Text ("Personal")
 				}
-				.onDelete { indexSet in
-					removeItems(at: indexSet)
+				
+				Section {
+					ForEach(expenses.items.filter({ $0.type == "Business"}),
+							id: \.id) { item in
+						HStack {
+							VStack (alignment: .leading) {
+								Text(item.name)
+									.font(.headline)
+								Text(item.type)
+							}
+							Spacer()
+							Text(item.amount, format: formatCurrency)
+								.foregroundColor(checkColor(amount: item.amount))
+						}
+					}
+					.onDelete { indexSet in
+						removeItems(at: indexSet)
+					}
+				} header: {
+					Text ("Business")
 				}
 			}
+			.listStyle(.grouped)
 			.navigationTitle("iExpense")
 			.toolbar {
 				Button {
@@ -49,6 +83,15 @@ struct ContentView: View {
 		expenses.items.remove(atOffsets: offsets)
 	}
 	
+	private func checkColor(amount: Double) -> Color {
+		if amount < 10 {
+			return Color.green
+		} else if amount < 100 {
+			return Color.orange
+		} else {
+			return Color.red
+		}
+	}
 }
 
 struct ContentView_Previews: PreviewProvider {

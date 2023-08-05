@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Expenses: ObservableObject {
+final class Expenses: ObservableObject {
 	@Published var items = [ExpenseItem]() {
 		didSet {
 			if let data = try? JSONEncoder().encode(items) {
