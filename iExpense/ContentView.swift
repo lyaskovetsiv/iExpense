@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-
-	// MARK: - Properties
+	
+	// MARK: - States
 	
 	@StateObject var expenses = Expenses()
 	@State private var isShowingAddNewExpense = false
+	
+	// MARK: - Private properties
+	
 	private var formatCurrency: FloatingPointFormatStyle<Double>.Currency {
 		return .currency(code: Locale.current.currency?.identifier ?? "USD")
 	}
