@@ -9,16 +9,22 @@ import SwiftUI
 
 struct AddView: View {
 	
+	// MARK: - States
+	
 	@Environment(\.dismiss) var dismiss
 	@State private var name: String = ""
 	@State private var type: String = "Personal"
 	@State private var amount = 0.0
 	@ObservedObject var expenses: Expenses
 	
+	// MARK: - Private properties
+	
 	private let types = ["Personal", "Business"]
 	private var formatCurrency: FloatingPointFormatStyle<Double>.Currency {
 		return .currency(code: Locale.current.currency?.identifier ?? "USD")
 	}
+	
+	// MARK: - UI
 	
     var body: some View {
 		NavigationView {
@@ -27,8 +33,6 @@ struct AddView: View {
 				Picker("Type", selection: $type) {
 					ForEach(types, id: \.self) { type in
 						Text("\(type)")
-						
-						
 					}
 				}
 				TextField("Amount", value: $amount, format: formatCurrency)
@@ -45,6 +49,8 @@ struct AddView: View {
 			}
 		}
     }
+	
+	// MARK: - Private methods
 	
 	private func createNewExpense() {
 		let newExpense = ExpenseItem(name: name, type: type, amount: amount)

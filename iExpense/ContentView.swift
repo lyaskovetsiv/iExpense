@@ -63,6 +63,8 @@ struct ContentView: View {
 		}
 	}
 	
+	// MARK: - Private methods
+	
 	private func removeItemFromSection(at offsets: IndexSet, section: String) {
 		let sectionExpenses  = expenses.items.filter { $0.type == section }
 		let expensesToDelete = offsets.map { sectionExpenses[$0] }
