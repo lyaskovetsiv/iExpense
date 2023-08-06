@@ -13,6 +13,7 @@ struct ContentView: View {
 	
 	@StateObject var expenses = Expenses()
 	@State private var isShowingAddNewExpense = false
+	@State private var sections = ["Personal", "Business"]
 	
 	// MARK: - Private properties
 	
@@ -22,50 +23,30 @@ struct ContentView: View {
 	
 	// MARK: - UI
 	
-    var body: some View {
+	var body: some View {
 		NavigationView {
 			List {
-				Section {
-					ForEach(expenses.items.filter({ $0.type == "Personal"}),
-							id: \.id) { item in
-						HStack {
-							VStack (alignment: .leading) {
-								Text(item.name)
-									.font(.headline)
-								Text(item.type)
+				ForEach(sections, id: \.self) { section in
+					Section(header: Text(section)) {
+						ForEach(expenses.items.filter({ $0.type == section}),
+								id: \.id) { item in
+							HStack {
+								VStack (alignment: .leading) {
+									Text(item.name)
+										.font(.headline)
+									Text(item.type)
+								}
+								Spacer()
+								Text(item.amount, format: formatCurrency)
+									.foregroundColor(checkColor(amount: item.amount))
 							}
-							Spacer()
-							Text(item.amount, format: formatCurrency)
-								.foregroundColor(checkColor(amount: item.amount))
+						}
+						.onDelete { indexSet in
+							removeItemFromSection(at: indexSet, section: section)
 						}
 					}
-					.onDelete { indexSet in
-						removeItems(at: indexSet)
-					}
-				} header: {
-					Text ("Personal")
 				}
 				
-				Section {
-					ForEach(expenses.items.filter({ $0.type == "Business"}),
-							id: \.id) { item in
-						HStack {
-							VStack (alignment: .leading) {
-								Text(item.name)
-									.font(.headline)
-								Text(item.type)
-							}
-							Spacer()
-							Text(item.amount, format: formatCurrency)
-								.foregroundColor(checkColor(amount: item.amount))
-						}
-					}
-					.onDelete { indexSet in
-						removeItems(at: indexSet)
-					}
-				} header: {
-					Text ("Business")
-				}
 			}
 			.listStyle(.grouped)
 			.navigationTitle("iExpense")
@@ -80,10 +61,18 @@ struct ContentView: View {
 		.sheet(isPresented: $isShowingAddNewExpense) {
 			AddView(expenses: expenses)
 		}
-    }
+	}
 	
-	private func removeItems(at offsets: IndexSet) {
-		expenses.items.remove(atOffsets: offsets)
+	private func removeItemFromSection(at offsets: IndexSet, section: String) {
+		let sectionExpenses  = expenses.items.filter { $0.type == section }
+		let expensesToDelete = offsets.map { sectionExpenses[$0] }
+		for expense in expensesToDelete {
+			if let index = expenses.items.firstIndex(where: { exp in
+				exp.id == expense.id
+			}) {
+				expenses.items.remove(at: index)
+			}
+		}
 	}
 	
 	private func checkColor(amount: Double) -> Color {
